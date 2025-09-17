@@ -9,24 +9,48 @@ connectDB()
 const app = express()
 app.use(express.json())
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
     res.send("hello")
-    
-})
-app.post('/notes',async(req,res)=>{
-    const {title ,content}= req.body
-    console.log(title,content);
-    await  notemodel.create({title,content})
 
-    res.json({message:"note added✅"})
-    
-    
 })
-app.listen(3000,()=>{
+// added    `
+app.post('/notes', async (req, res) => {
+    const { title, content } = req.body
+    console.log(title, content);
+    await notemodel.create({ title, content })
+
+    res.json({ message: "note added✅" })
+
+
+})
+// fetch
+app.get('/notes', async (req, res) => {
+    notes = await notemodel.find()
+    res.json({
+        message: "Notes fetched✅",
+        notes
+    })
+})
+// delete
+app.delete('/notes/:id', async (req, res) => {
+    const noteid = req.params.id
+    await notemodel.findByIdAndDelete({ _id: noteid }) 
+    res.json({message: "note deleted✅"})
+})
+// update
+
+app.patch('/notes/:id', async (req, res) => {
+    const noteid = req.params.id
+    const { title, content } = req.body
+    await notemodel
+        .findByIdAndUpdate(noteid, { title, content })
+    res.json({message: "note updated✅"})
+})
+app.listen(3000, () => {
     console.log("Start✅");
 
-    
+
 })
 
- 
+
 // mongoose use is connect to express to mongodb server
